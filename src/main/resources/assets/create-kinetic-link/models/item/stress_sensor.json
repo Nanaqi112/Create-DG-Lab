@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "create-kinetic-link:item/stress_sensor"
+  }
+}

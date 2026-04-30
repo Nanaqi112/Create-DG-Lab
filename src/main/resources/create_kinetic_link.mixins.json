@@ -1,0 +1,4 @@
+{
+  "fml.clientHooks": "com.simibubi.create.CreateFabricatio",
+  "accessWidener": "create_kinetic_link.accesswidener"
+}

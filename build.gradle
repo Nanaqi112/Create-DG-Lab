@@ -1,0 +1,104 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = '1.0.0'
+group = 'com.dglab.coyote'
+
+base {
+    archivesName = 'create-kinetic-link'
+}
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                coyote {
+                    source sourceSets.main
+                }
+                create {
+                    source sourceSets.main
+                }
+            }
+
+            args '--nogui'
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                coyote {
+                    source sourceSets.main
+                }
+                create {
+                    source sourceSets.main
+                }
+            }
+
+            args '--nogui'
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/main/resources' }
+
+repositories {
+    maven {
+        name = "Minecraft Forge"
+        url = "https://maven.minecraftforge.net/"
+    }
+    maven {
+        name = "tterrag's maven"
+        url = "https://maven.tterrag.com/"
+    }
+    maven {
+        name = "CurseForge"
+        url = "https://www.cursemaven.com"
+    }
+    maven {
+        name = "Blamejared"
+        url = "https://maven.blamejared.com/"
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.2.0'
+
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+
+    implementation 'org.java-websocket:Java-WebSocket:1.5.4'
+
+    compileOnly fg.deobf('com.simibubi.create:create-1.20.1:0.6.1.e:slim')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Timestamp'   : System.currentTimeMillis(),
+            'Specification-Vendor'     : 'DG Lab',
+            'Specification-Name'        : 'Create Kinetic Link',
+            'Implementation-Version'    : project.version,
+            'Implementation-Timestamp'  : System.currentTimeMillis(),
+            'Mixin-Order'              : 'before:forge'
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

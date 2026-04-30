@@ -1,0 +1,6 @@
+{
+  "parent": "create:block/cube_cobble_inputs",
+  "textures": {
+    "particle": "create_kinetic_link:block/stress_sensor"
+  }
+}

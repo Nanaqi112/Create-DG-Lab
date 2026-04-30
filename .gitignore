@@ -1,0 +1,21 @@
+# Gradle 编译产生的临时文件
+/build/
+/.gradle/
+
+# 运行游戏生成的日志和存档
+/run/
+*.log
+
+# IDE 配置文件
+/.claude/
+/.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# 系统文件
+Thumbs.db
+.DS_Store

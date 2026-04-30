@@ -1,0 +1,14 @@
+{
+  "en_us": {
+    "item.create-kinetic-link.stress_sensor": "Coyote Kinetic Monitor",
+    "block.create-kinetic-link.stress_sensor": "Coyote Kinetic Monitor",
+    "create_kinetic_link.tooltip.stress_sensor": "Connects kinetic stress to DG-Lab device",
+    "create_kinetic_link.tooltip.how_to_use": "Connect to kinetic network with a shaft"
+  },
+  "zh_cn": {
+    "item.create-kinetic-link.stress_sensor": "郊狼动力监测器",
+    "block.create-kinetic-link.stress_sensor": "郊狼动力监测器",
+    "create_kinetic_link.tooltip.stress_sensor": "将动力网络应力连接到DG-Lab设备",
+    "create_kinetic_link.tooltip.how_to_use": "用传动轴连接到动力网络"
+  }
+}
