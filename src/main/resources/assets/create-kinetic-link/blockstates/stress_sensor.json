@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "create-kinetic-link:block/stress_sensor" },
-    "facing=south": { "model": "create-kinetic-link:block/stress_sensor", "y": 180 },
-    "facing=east": { "model": "create-kinetic-link:block/stress_sensor", "y": 90 },
-    "facing=west": { "model": "create-kinetic-link:block/stress_sensor", "y": 270 }
-  }
-}

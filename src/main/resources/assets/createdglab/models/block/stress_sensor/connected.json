@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "createdglab:block/stress_sensor_end",
+    "side": "createdglab:block/stress_sensor_side_on"
+  }
+}

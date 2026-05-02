@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=y,connected=false": { "model": "createdglab:block/stress_sensor/disconnected" },
+    "axis=y,connected=true":  { "model": "createdglab:block/stress_sensor/connected" },
+    "axis=z,connected=false": { "model": "createdglab:block/stress_sensor/disconnected", "x": 90 },
+    "axis=z,connected=true":  { "model": "createdglab:block/stress_sensor/connected", "x": 90 },
+    "axis=x,connected=false": { "model": "createdglab:block/stress_sensor/disconnected", "x": 90, "y": 90 },
+    "axis=x,connected=true":  { "model": "createdglab:block/stress_sensor/connected", "x": 90, "y": 90 }
+  }
+}

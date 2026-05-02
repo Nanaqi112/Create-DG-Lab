@@ -1,0 +1,6 @@
+{
+  "block.createdglab.stress_sensor": "Coyote Sensor",
+  "itemGroup.createdglab": "Create DG-Lab",
+  "screen.createdglab.sensor": "Coyote Sensor",
+  "item.createdglab.stress_sensor.tooltip": "You'd better not let stress overload"
+}

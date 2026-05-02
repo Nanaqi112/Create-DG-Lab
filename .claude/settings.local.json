@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jar tf *)",
+      "Bash(cd /tmp)",
+      "Bash(jar xf *)",
+      "Bash(javap -c -p /tmp/com/simibubi/create/content/kinetics/KineticNetwork.class)",
+      "Bash(javap *)",
+      "Bash(javap -p \"/tmp/com/simibubi/create/content/kinetics/base/KineticBlock.class\")",
+      "Bash(javap -p \"/tmp/com/simibubi/create/content/kinetics/transmission/SplitShaftBlockEntity.class\")",
+      "Bash(./gradlew build *)",
+      "Bash(./gradlew dependencies *)",
+      "Bash(./gradlew compileJava -Dnet.minecraftforge.gradle.check.certs=false)",
+      "Bash(./gradlew clean *)",
+      "Bash(find . -name \"*.jar\" -path \"*/forge*\" -exec jar tf {} \\\\;)",
+      "Bash(./gradlew compileJava *)",
+      "Bash(javac -cp src/main/java src/main/java/com/jiemo/createdglab/util/WaveformGenerator.java -d /tmp/test)",
+      "Bash(java -cp /tmp/test com.jiemo.createdglab.util.WaveformGenerator)"
+    ]
+  }
+}
