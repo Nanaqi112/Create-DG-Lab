@@ -15,6 +15,7 @@
 
 ## 使用方法
 
+【最好不要让应力过载 | Create DG-Lab首次发布！】 https://www.bilibili.com/video/BV1DLR7BqE4o/?share_source=copy_web&vd_source=a9bc5f04731f1d8d3046b435a28fa4e0
 1. 安装模组（需要 Create 6.0.x + Forge 47.x）
 2. 合成：一根木棍 → 郊狼传感器（没错，就是这么简单）
 3. 放在动力网络中，连接传动杆
