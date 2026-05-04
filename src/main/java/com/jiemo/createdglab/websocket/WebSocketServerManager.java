@@ -422,6 +422,14 @@ public class WebSocketServerManager {
             while (interfaces.hasMoreElements()) {
                 NetworkInterface ni = interfaces.nextElement();
                 if (ni.isLoopback() || !ni.isUp()) continue;
+
+                // Skip virtual/VPN network interfaces
+                String name = ni.getDisplayName().toLowerCase();
+                if (name.contains("radmin") || name.contains("vpn") ||
+                    name.contains("virtual") || name.contains("vmware") ||
+                    name.contains("hyper-v") || name.contains("npcap") ||
+                    name.contains("loopback")) continue;
+
                 Enumeration<InetAddress> addresses = ni.getInetAddresses();
                 while (addresses.hasMoreElements()) {
                     InetAddress addr = addresses.nextElement();
