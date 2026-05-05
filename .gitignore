@@ -19,6 +19,12 @@ bin/
 .DS_Store
 Thumbs.db
 
+# Project
+libs/
+com/
+META-INF/
+.claude/
+
 # Minecraft
 logs/
 crash-reports/
