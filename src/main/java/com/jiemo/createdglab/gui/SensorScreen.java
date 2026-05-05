@@ -1,6 +1,5 @@
 package com.jiemo.createdglab.gui;
 
-import com.jiemo.createdglab.block.StressSensorBlockEntity;
 import com.jiemo.createdglab.util.QRCodeGenerator;
 import com.jiemo.createdglab.websocket.WebSocketServerManager;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -11,45 +10,32 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.image.BufferedImage;
 
-public class SensorScreen extends Screen {
-    private final BlockPos sensorPos;
-    private float stress;
-    private float capacity;
-    private float stressRatio;
-    private boolean overStressed;
-
+public class SensorScreen extends AbstractContainerScreen<SensorMenu> {
     private ResourceLocation qrTexture;
     private boolean qrGenerated = false;
-    private int qrTexWidth;
-    private int qrTexHeight;
 
-    public SensorScreen(BlockPos pos, float stress, float capacity, boolean overStressed) {
-        super(Component.translatable("screen.createdglab.sensor"));
-        this.sensorPos = pos;
-        this.stress = stress;
-        this.capacity = capacity;
-        this.stressRatio = capacity > 0 ? stress / capacity : 0;
-        this.overStressed = overStressed;
+    public SensorScreen(SensorMenu menu, Inventory playerInventory, Component title) {
+        super(menu, playerInventory, title);
+        this.imageWidth = 280;
+        this.imageHeight = 166;
     }
 
     @Override
     protected void init() {
-        addRenderableWidget(Button.builder(Component.literal("Close"), button -> onClose())
-                .bounds(width / 2 - 50, height - 30, 100, 20)
-                .build());
-
+        super.init();
+        this.titleLabelY = 6;
+        this.inventoryLabelY = this.imageHeight - 94;
         if (!qrGenerated) {
             generateQrCode();
         }
@@ -82,8 +68,6 @@ public class SensorScreen extends Screen {
 
         qrTexture = ResourceLocation.fromNamespaceAndPath("createdglab", "textures/dynamic/qr_" + System.currentTimeMillis());
         minecraft.getTextureManager().register(qrTexture, texture);
-        qrTexWidth = w;
-        qrTexHeight = h;
         qrGenerated = true;
     }
 
@@ -106,47 +90,30 @@ public class SensorScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Dark overlay without blur
-        guiGraphics.fill(0, 0, width, height, 0xC0101010);
-
-        // Refresh live values from block entity
-        if (minecraft != null && minecraft.level != null) {
-            BlockEntity be = minecraft.level.getBlockEntity(sensorPos);
-            if (be instanceof StressSensorBlockEntity sensor) {
-                this.stress = sensor.getStress();
-                this.capacity = sensor.getCapacity();
-                this.stressRatio = this.capacity > 0 ? this.stress / this.capacity : 0;
-                this.overStressed = sensor.isOverStressed();
-            }
-        }
-
-        int centerX = width / 2;
-        int y = 20;
-
-        // Title
-        guiGraphics.drawCenteredString(font, title, centerX, y, 0xFFFFFF);
-        y += 20;
-
-        // Connection status
-        WebSocketServerManager ws = WebSocketServerManager.getInstance();
-        String connStatus = ws.isConnected() ? "Connected to DG-Lab" : "Waiting for DG-Lab connection...";
-        int connColor = ws.isConnected() ? ChatFormatting.GREEN.getColor() : ChatFormatting.YELLOW.getColor();
-        guiGraphics.drawCenteredString(font, connStatus, centerX, y, connColor);
-        y += 12;
-
-        // Server address
-        String address = "ws://" + ws.getServerAddress() + ":" + ws.getServerPort();
-        guiGraphics.drawCenteredString(font, address, centerX, y, 0xAAAAAA);
-        y += 20;
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        // Dark panel background
+        guiGraphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xC0101010);
+        // Border
+        guiGraphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + 1, 0xFF555555);
+        guiGraphics.fill(leftPos, topPos + imageHeight - 1, leftPos + imageWidth, topPos + imageHeight, 0xFF555555);
+        guiGraphics.fill(leftPos, topPos, leftPos + 1, topPos + imageHeight, 0xFF555555);
+        guiGraphics.fill(leftPos + imageWidth - 1, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFF555555);
 
         // Stress bar
-        int barX = centerX - 80;
-        int barWidth = 160;
-        int barHeight = 14;
-        guiGraphics.fill(barX - 1, y - 1, barX + barWidth + 1, y + barHeight + 1, 0xFF555555);
-        guiGraphics.fill(barX, y, barX + barWidth, y + barHeight, 0xFF222222);
+        float stress = menu.getStress();
+        float capacity = menu.getCapacity();
+        float stressRatio = capacity > 0 ? stress / capacity : 0;
+        boolean overStressed = menu.isOverStressed();
 
+        int barX = leftPos + 8;
+        int barY = topPos + 20;
+        int barWidth = 160;
+        int barHeight = 10;
+
+        // Bar background
+        guiGraphics.fill(barX, barY, barX + barWidth, barY + barHeight, 0xFF222222);
+
+        // Bar fill color
         int barColor;
         if (overStressed) barColor = 0xFFFF0000;
         else if (stressRatio > 0.85) barColor = 0xFFFFAA00;
@@ -155,60 +122,69 @@ public class SensorScreen extends Screen {
 
         int fillWidth = (int) (barWidth * Math.min(stressRatio, 1.0f));
         if (fillWidth > 0) {
-            guiGraphics.fill(barX, y, barX + fillWidth, y + barHeight, barColor);
+            guiGraphics.fill(barX, barY, barX + fillWidth, barY + barHeight, barColor);
         }
 
+        // Stress text on bar
         String stressText = String.format("%.0f / %.0f (%.0f%%)", stress, capacity, stressRatio * 100);
-        guiGraphics.drawCenteredString(font, stressText, centerX, y + 2, 0xFFFFFF);
-        y += barHeight + 8;
+        guiGraphics.drawCenteredString(font, stressText, barX + barWidth / 2, barY + 1, 0xFFFFFF);
 
+        // Overstressed warning
         if (overStressed) {
-            guiGraphics.drawCenteredString(font, "NETWORK OVERLOADED!", centerX, y, 0xFF5555);
-            y += 12;
+            guiGraphics.drawCenteredString(font, "NETWORK OVERLOADED!", leftPos + imageWidth / 2, barY + barHeight + 3, 0xFF5555);
         }
 
-        // QR Code
-        y += 5;
+        // QR Code section
+        WebSocketServerManager ws = WebSocketServerManager.getInstance();
+        if (!ws.isConnected() && qrTexture != null) {
+            int qrSize = 64;
+            int qrX = leftPos + imageWidth / 2 - qrSize / 2;
+            int qrY = topPos + 38;
+            renderQrCode(guiGraphics, qrX, qrY, qrSize);
+        }
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // Title
+        guiGraphics.drawCenteredString(font, title, imageWidth / 2, 6, 0xFFFFFF);
+
+        WebSocketServerManager ws = WebSocketServerManager.getInstance();
+
+        // Connection status
+        String connStatus = ws.isConnected() ? "Connected" : "Waiting...";
+        int connColor = ws.isConnected() ? ChatFormatting.GREEN.getColor() : ChatFormatting.YELLOW.getColor();
+        guiGraphics.drawCenteredString(font, connStatus, imageWidth / 2, 34, connColor);
+
         if (!ws.isConnected()) {
-            guiGraphics.drawCenteredString(font, "Scan with DG-Lab App:", centerX, y, 0xCCCCCC);
-            y += 14;
+            // Show server address and QR info
+            String address = "ws://" + ws.getServerAddress() + ":" + ws.getServerPort();
+            guiGraphics.drawCenteredString(font, address, imageWidth / 2, 105, 0xAAAAAA);
+            guiGraphics.drawCenteredString(font, "Scan with DG-Lab App", imageWidth / 2, 115, 0xCCCCCC);
 
-            // Render QR code via direct OpenGL
-            if (qrTexture != null) {
-                int qrSize = 120;
-                int qrX = centerX - qrSize / 2;
-                renderQrCode(guiGraphics, qrX, y, qrSize);
-                y += qrSize + 5;
-            }
-
-            // Show URL below QR
+            // URL below
             String qrUrl = ws.getQrCodeUrl();
-            if (font.width(qrUrl) > width - 20) {
-                qrUrl = qrUrl.substring(0, 40) + "..." + qrUrl.substring(qrUrl.length() - 30);
+            if (font.width(qrUrl) > imageWidth - 16) {
+                qrUrl = qrUrl.substring(0, 30) + "..." + qrUrl.substring(qrUrl.length() - 20);
             }
-            guiGraphics.drawCenteredString(font, qrUrl, centerX, y, 0x8888FF);
+            guiGraphics.drawCenteredString(font, qrUrl, imageWidth / 2, 125, 0x8888FF);
         } else {
-            guiGraphics.drawCenteredString(font, "DG-Lab connected!", centerX, y, 0x55FF55);
-            y += 15;
+            guiGraphics.drawCenteredString(font, "DG-Lab connected!", imageWidth / 2, 105, 0x55FF55);
             String appInfo = String.format("A: %d  B: %d",
                     ws.getLastSentIntensityA(), ws.getLastSentIntensityB());
-            guiGraphics.drawCenteredString(font, appInfo, centerX, y, 0xAAAAAA);
+            guiGraphics.drawCenteredString(font, appInfo, imageWidth / 2, 115, 0xAAAAAA);
         }
 
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        // No inventory label needed
     }
 
     @Override
     public void removed() {
+        super.removed();
         if (qrTexture != null) {
             minecraft.getTextureManager().release(qrTexture);
             qrTexture = null;
             qrGenerated = false;
         }
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
     }
 }

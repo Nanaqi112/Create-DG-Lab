@@ -1,10 +1,12 @@
 package com.jiemo.createdglab;
 
 import com.jiemo.createdglab.config.ModConfig;
+import com.jiemo.createdglab.gui.ModScreens;
 import com.jiemo.createdglab.registry.ModBlockEntities;
 import com.jiemo.createdglab.registry.ModBlocks;
 import com.jiemo.createdglab.registry.ModCreativeTab;
 import com.jiemo.createdglab.registry.ModItems;
+import com.jiemo.createdglab.registry.ModMenus;
 import com.jiemo.createdglab.websocket.WebSocketServerManager;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -29,7 +31,11 @@ public class CreateDGLab {
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModMenus.register(modEventBus);
         ModCreativeTab.register(modEventBus);
+
+        // Register screen factory (client-side)
+        modEventBus.register(ModScreens.class);
 
         // Register lifecycle events
         modEventBus.addListener(this::commonSetup);

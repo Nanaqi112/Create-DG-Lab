@@ -1,14 +1,15 @@
 package com.jiemo.createdglab.block;
 
-import com.jiemo.createdglab.gui.SensorScreen;
+import com.jiemo.createdglab.gui.SensorMenu;
 import com.jiemo.createdglab.registry.ModBlockEntities;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -20,11 +21,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.MenuProvider;
 import org.jetbrains.annotations.Nullable;
 
-public class StressSensorBlock extends RotatedPillarKineticBlock implements EntityBlock {
+public class StressSensorBlock extends RotatedPillarKineticBlock implements EntityBlock, MenuProvider {
 
     public static final BooleanProperty CONNECTED = BooleanProperty.create("connected");
+    private BlockPos menuOpenPos;
 
     public StressSensorBlock(Properties properties) {
         super(properties);
@@ -50,14 +53,22 @@ public class StressSensorBlock extends RotatedPillarKineticBlock implements Enti
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
-        if (level.isClientSide) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof StressSensorBlockEntity sensor) {
-                Minecraft.getInstance().setScreen(new SensorScreen(
-                        pos, sensor.getStress(), sensor.getCapacity(), sensor.isOverStressed()));
-            }
+        if (!level.isClientSide) {
+            this.menuOpenPos = pos;
+            player.openMenu(this, pos);
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        BlockPos pos = this.menuOpenPos != null ? this.menuOpenPos : player.blockPosition();
+        return new SensorMenu(containerId, playerInventory, pos);
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("screen.createdglab.sensor");
     }
 
     @Nullable
