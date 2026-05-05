@@ -1,33 +1,29 @@
 package com.jiemo.createdglab;
 
 import com.jiemo.createdglab.config.ModConfig;
-import com.jiemo.createdglab.network.ModPackets;
 import com.jiemo.createdglab.registry.ModBlockEntities;
 import com.jiemo.createdglab.registry.ModBlocks;
 import com.jiemo.createdglab.registry.ModCreativeTab;
 import com.jiemo.createdglab.registry.ModItems;
 import com.jiemo.createdglab.websocket.WebSocketServerManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig.Type;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig.Type;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import org.slf4j.Logger;
+import com.mojang.logging.LogUtils;
 
 @Mod(CreateDGLab.MODID)
 public class CreateDGLab {
     public static final String MODID = "createdglab";
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
-    public CreateDGLab(FMLJavaModLoadingContext context) {
-        IEventBus modEventBus = context.getModEventBus();
-
+    public CreateDGLab(IEventBus modEventBus, ModContainer modContainer) {
         // Register config
-        ModLoadingContext.get().registerConfig(Type.COMMON, ModConfig.SPEC);
+        modContainer.registerConfig(Type.COMMON, ModConfig.SPEC);
 
         // Register deferred registers
         ModBlocks.register(modEventBus);
@@ -38,16 +34,14 @@ public class CreateDGLab {
         // Register lifecycle events
         modEventBus.addListener(this::commonSetup);
 
-        // Register forge events
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.addListener(this::onServerStopping);
+        // Register game events
+        NeoForge.EVENT_BUS.addListener(this::onServerStopping);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            ModPackets.register();
             WebSocketServerManager.getInstance().start();
-            LOGGER.info("[Create DG-Lab] v1.0.0 loaded - WebSocket server started");
+            LOGGER.info("[Create DG-Lab] v1.1.0 loaded - WebSocket server started");
         });
     }
 

@@ -1,46 +1,29 @@
 package com.jiemo.createdglab.network;
 
-import com.jiemo.createdglab.block.StressSensorBlockEntity;
-import net.minecraft.client.Minecraft;
+import com.jiemo.createdglab.CreateDGLab;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.Supplier;
+public record StressSyncPacket(BlockPos pos, float stress, float capacity, boolean overStressed)
+        implements CustomPacketPayload {
 
-public class StressSyncPacket {
-    private final BlockPos pos;
-    private final float stress;
-    private final float capacity;
-    private final boolean overStressed;
+    public static final CustomPacketPayload.Type<StressSyncPacket> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CreateDGLab.MODID, "stress_sync"));
 
-    public StressSyncPacket(BlockPos pos, float stress, float capacity, boolean overStressed) {
-        this.pos = pos;
-        this.stress = stress;
-        this.capacity = capacity;
-        this.overStressed = overStressed;
-    }
+    public static final StreamCodec<ByteBuf, StressSyncPacket> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC, StressSyncPacket::pos,
+            ByteBufCodecs.FLOAT, StressSyncPacket::stress,
+            ByteBufCodecs.FLOAT, StressSyncPacket::capacity,
+            ByteBufCodecs.BOOL, StressSyncPacket::overStressed,
+            StressSyncPacket::new
+    );
 
-    public static void encode(StressSyncPacket packet, FriendlyByteBuf buf) {
-        buf.writeBlockPos(packet.pos);
-        buf.writeFloat(packet.stress);
-        buf.writeFloat(packet.capacity);
-        buf.writeBoolean(packet.overStressed);
-    }
-
-    public static StressSyncPacket decode(FriendlyByteBuf buf) {
-        return new StressSyncPacket(buf.readBlockPos(), buf.readFloat(), buf.readFloat(), buf.readBoolean());
-    }
-
-    public static void handle(StressSyncPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            if (Minecraft.getInstance().level != null) {
-                var be = Minecraft.getInstance().level.getBlockEntity(packet.pos);
-                if (be instanceof StressSensorBlockEntity sensor) {
-                    // Client-side update handled by the block entity's updateFromNetwork
-                }
-            }
-        });
-        ctx.get().setPacketHandled(true);
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

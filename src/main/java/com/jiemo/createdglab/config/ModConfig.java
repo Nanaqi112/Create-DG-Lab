@@ -1,24 +1,24 @@
 package com.jiemo.createdglab.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ModConfig {
-    public static final ForgeConfigSpec SPEC;
+    public static final ModConfigSpec SPEC;
 
     // WebSocket
-    public static final ForgeConfigSpec.IntValue WS_PORT;
-    public static final ForgeConfigSpec.ConfigValue<String> WS_HOST;
+    public static final ModConfigSpec.IntValue WS_PORT;
+    public static final ModConfigSpec.ConfigValue<String> WS_HOST;
 
     // Strength mapping (stress ratio thresholds)
-    public static final ForgeConfigSpec.DoubleValue LOW_THRESHOLD;
-    public static final ForgeConfigSpec.DoubleValue MID_THRESHOLD;
+    public static final ModConfigSpec.DoubleValue LOW_THRESHOLD;
+    public static final ModConfigSpec.DoubleValue MID_THRESHOLD;
 
     // Channel mapping
-    public static final ForgeConfigSpec.BooleanValue CHANNEL_A_ENABLED;
-    public static final ForgeConfigSpec.BooleanValue CHANNEL_B_ENABLED;
+    public static final ModConfigSpec.BooleanValue CHANNEL_A_ENABLED;
+    public static final ModConfigSpec.BooleanValue CHANNEL_B_ENABLED;
 
     static {
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
         // WebSocket section
         builder.push("websocket");

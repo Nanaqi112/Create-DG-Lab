@@ -2,7 +2,6 @@ package com.jiemo.createdglab.block;
 
 import com.jiemo.createdglab.gui.SensorScreen;
 import com.jiemo.createdglab.registry.ModBlockEntities;
-import com.jiemo.createdglab.websocket.WebSocketServerManager;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -49,10 +48,8 @@ public class StressSensorBlock extends RotatedPillarKineticBlock implements Enti
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-                                  InteractionHand hand, BlockHitResult hit) {
-        if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
-
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                               BlockHitResult hit) {
         if (level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof StressSensorBlockEntity sensor) {
@@ -60,7 +57,7 @@ public class StressSensorBlock extends RotatedPillarKineticBlock implements Enti
                         pos, sensor.getStress(), sensor.getCapacity(), sensor.isOverStressed()));
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Nullable

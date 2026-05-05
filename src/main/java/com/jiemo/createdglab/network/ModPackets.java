@@ -1,23 +1,35 @@
 package com.jiemo.createdglab.network;
 
 import com.jiemo.createdglab.CreateDGLab;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.client.Minecraft;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+@EventBusSubscriber(modid = CreateDGLab.MODID)
 public class ModPackets {
-    private static final String PROTOCOL_VERSION = "1";
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation("createdglab", "main"),
-            () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals
-    );
 
-    private static int packetId = 0;
+    @SubscribeEvent
+    public static void register(final RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar("1");
 
-    public static void register() {
-        CHANNEL.registerMessage(packetId++, StressSyncPacket.class,
-                StressSyncPacket::encode, StressSyncPacket::decode, StressSyncPacket::handle);
+        registrar.playToClient(
+                StressSyncPacket.TYPE,
+                StressSyncPacket.STREAM_CODEC,
+                ModPackets::handleStressSync
+        );
+    }
+
+    private static void handleStressSync(StressSyncPacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (Minecraft.getInstance().level != null) {
+                var be = Minecraft.getInstance().level.getBlockEntity(packet.pos());
+                if (be instanceof com.jiemo.createdglab.block.StressSensorBlockEntity sensor) {
+                    // Client-side update handled by the block entity's sync
+                }
+            }
+        });
     }
 }

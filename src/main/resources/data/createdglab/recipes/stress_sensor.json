@@ -1,12 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "ingredients": [
+  "ingredient": [
     {
-      "item": "minecraft:stick"
+      "id": "minecraft:stick"
     }
   ],
   "result": {
-    "item": "createdglab:stress_sensor",
+    "id": "createdglab:stress_sensor",
     "count": 1
   }
 }

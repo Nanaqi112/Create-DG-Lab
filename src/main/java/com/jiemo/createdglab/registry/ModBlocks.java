@@ -4,16 +4,15 @@ import com.jiemo.createdglab.CreateDGLab;
 import com.jiemo.createdglab.block.StressSensorBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModBlocks {
-    public static final DeferredRegister<Block> BLOCKS =
-            DeferredRegister.create(ForgeRegistries.BLOCKS, CreateDGLab.MODID);
+    public static final DeferredRegister.Blocks BLOCKS =
+            DeferredRegister.createBlocks(CreateDGLab.MODID);
 
-    public static final RegistryObject<Block> STRESS_SENSOR = BLOCKS.register("stress_sensor",
+    public static final DeferredBlock<Block> STRESS_SENSOR = BLOCKS.register("stress_sensor",
             () -> new StressSensorBlock(BlockBehaviour.Properties.of()
                     .noOcclusion()
                     .strength(3.0f)
