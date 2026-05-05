@@ -27,7 +27,7 @@ public class SensorScreen extends AbstractContainerScreen<SensorMenu> {
 
     public SensorScreen(SensorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 280;
+        this.imageWidth = 320;
         this.imageHeight = 166;
     }
 
@@ -105,9 +105,9 @@ public class SensorScreen extends AbstractContainerScreen<SensorMenu> {
         float stressRatio = capacity > 0 ? stress / capacity : 0;
         boolean overStressed = menu.isOverStressed();
 
-        int barX = leftPos + 8;
+        int barWidth = 200;
+        int barX = leftPos + (imageWidth - barWidth) / 2;
         int barY = topPos + 20;
-        int barWidth = 160;
         int barHeight = 10;
 
         // Bar background

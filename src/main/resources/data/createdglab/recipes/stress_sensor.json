@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "ingredient": [
+  "ingredients": [
     {
-      "id": "minecraft:stick"
+      "item": "minecraft:stick"
     }
   ],
   "result": {
