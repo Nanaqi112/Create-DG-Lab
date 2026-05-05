@@ -2,7 +2,7 @@
 
 > *最好不要让应力过载。*
 
-一个 Minecraft Forge 模组，将 Create 模组的**应力系统**与 **DG-Lab（郊狼）** 设备联动。当你的动力网络过载时，你不仅会在游戏里看到红字警告，还会在现实中感受到它。
+一个 Minecraft NeoForge 模组，将 Create 模组的**应力系统**与 **DG-Lab（郊狼）** 设备联动。当你的动力网络过载时，你不仅会在游戏里看到红字警告，还会在现实中感受到它。
 
 ## 功能
 
@@ -16,7 +16,7 @@
 ## 使用方法
 
 【最好不要让应力过载 | Create DG-Lab首次发布！】 https://www.bilibili.com/video/BV1DLR7BqE4o/?share_source=copy_web&vd_source=a9bc5f04731f1d8d3046b435a28fa4e0
-1. 安装模组（需要 Create 6.0.x + Forge 47.x）
+1. 安装模组（需要 Create 6.0.x + NeoForge 21.1.200+）
 2. 合成：一根木棍 → 郊狼传感器（没错，就是这么简单）
 3. 放在动力网络中，连接传动杆
 4. 右键方块，扫描二维码连接 DG-Lab App
@@ -33,10 +33,23 @@
 
 ## 依赖
 
-- Minecraft 1.20.1
-- Forge 47.4.10+
+- Minecraft 1.21.1
+- NeoForge 21.1.200+
 - Create 6.0.x
-- Java 17
+- Java 21
+
+## 编译
+
+```bash
+./gradlew build
+```
+
+编译产物在 `build/libs/` 目录下：
+
+| 文件 | 说明 |
+|------|------|
+| `createdglab-neoforge-1.21.1-x.x.x.jar` | **使用这个** — 含所有依赖的完整版本 |
+| `createdglab-neoforge-1.21.1-x.x.x-slim.jar` | 精简版，不含第三方依赖，不推荐 |
 
 ## 协议
 
@@ -45,4 +58,3 @@
 ## 许可
 
 MIT License
-
